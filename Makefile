@@ -1,7 +1,7 @@
 ROM_NAME = gb-platformer
 SRCDIR = src
 INCDIR = include
-BUILDDIR = build
+BUILDDIR = /home/bali/Projects/Other/rusty-emulator/rusty-emulator/devroms
 
 RGBASM = rgbasm
 RGBLINK = rgblink
