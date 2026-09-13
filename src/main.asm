@@ -29,11 +29,11 @@ FirstVBlank:
 
     ; Write to screen
     ld de, T_Title
-    ld b, 2
+    ld b, 4
     ld c, 3
 
     call WriteTitleToScreen
- 
+
     ld a, LCDC_ON | LCDC_BG_ON
     ld [rLCDC], a
 
@@ -41,19 +41,117 @@ FirstVBlank:
     ld [rBGP], a
     ld [rOBP0], a
 
+    ld a, 0b00000001
+    ld [rIE], a
+
+    ei
+
 Main:
+    ; main
+
+    ld hl, VBlankFlag
+    xor a
+
+.VBlank:
     halt
+
+    nop
+
+    cp a, [hl]
+    jr z, .VBlank
+    ld [hl], a
+
+    ; vlbank
+    ld b, 2
+    ld c, 12
+    ld de, T_PressAnyButton
+
+    call BlinkText
 
     jr Main
 
-; @param de: text start
 ; @param b: x coord
 ; @param c: y coord
+; @param de: text start
+BlinkText:
+    ld a, [TextBlinkTimer]
+    inc a
+    ld [TextBlinkTimer], a
+
+    cp a, 1
+    call z, ClearTilemapArea
+
+    cp a, 30
+    call z, WriteTitleToScreen
+
+    cp a, 60
+    ret c
+
+    xor a
+    ld [TextBlinkTimer], a
+
+    ret
+
+; @param b: x coord
+; @param c: y coord
+; @param de: text start
 WriteTitleToScreen:
+    call CalculateTilemapCoords
+
+.doTitleWrite:
+    ld a, [de]
+    or a
+
+    ret z
+
+    inc de
+
+    sub 64
+    bit 7, a
+
+    jr z, .notSpace
+
+    xor a
+
+.notSpace:
+    ld [hl+], a
+
+    jr .doTitleWrite
+
+; @param b: x coord
+; @param c: y coord
+; @param de: text start
+ClearTilemapArea:
+    push de
+
+    call CalculateTilemapCoords
+
+.clear:
+    ld a, [de]
+    or a
+
+    jr z, .done
+
+    inc de
+
+    xor a
+
+    ld [hl+], a
+
+    jr .clear
+
+.done:
+    pop de
+
+    ret
+
+; @param b: x coord
+; @param c: y coord
+; @return hl: tilemap address
+CalculateTilemapCoords:
     ld hl, TILEMAP0
 
-    add a, b
-    ld l, a
+    ld l, b
 
     ld b, 0
     ld a, c
@@ -72,25 +170,7 @@ WriteTitleToScreen:
 
     add hl, bc
 
-.doTitleWrite
-    ld a, [de]
-    or a
-
-    ret z
-
-    inc de
-
-    bit 7, a
-    jr z, .notSpace
-
-    xor a
-
-.notSpace:
-    sub 64
-
-    ld [hl+], a
-
-    jr .doTitleWrite
+    ret
 
 ; @param de: source
 ; @param hl: dest
@@ -109,9 +189,28 @@ CopySpaceTo:
 
     ret
 
+SECTION "VBlank interrupt service", ROM0[0x040]
+    push af
+    
+    ld a, 1
+    ld [VBlankFlag], a
+    
+    pop af
+
+    reti
+
 SECTION "Player data", WRAM0
 score: db
 
 SECTION "Text data", ROM0
 T_Title:
-    db "ABBA BABA BAB", 0
+    db "BCACBACBACB", 0
+
+T_PressAnyButton:
+    db "BCACB ACB BBCACB", 0
+
+SECTION "Variables", WRAM0
+VBlankFlag:
+    db
+TextBlinkTimer:
+    db
