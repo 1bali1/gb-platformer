@@ -209,15 +209,18 @@ SECTION "VBlank interrupt service", ROM0[0x040]
 SECTION "Player data", WRAM0
 score: db
 
+
+SECTION "Variables", WRAM0
+VBlankFlag:
+    db
+    
+TextBlinkTimer:
+    db
+
+
 SECTION "Text data", ROM0
 T_Title:
     db "BCACBACBACB", 0
 
 T_PressAnyButton:
-    db "BCACB ACB BBCACB", 0
-
-SECTION "Variables", WRAM0
-VBlankFlag:
-    db
-TextBlinkTimer:
-    db
+    db "BAD ACB BBCACB", 0
