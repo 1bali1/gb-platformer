@@ -27,6 +27,13 @@ FirstVBlank:
 
     call CopySpaceTo
 
+    ; Load bg tilemap
+    ld de, MainTitle
+    ld hl, TILEMAP0
+    ld bc, MainTitle.End - MainTitle
+
+    call CopySpaceTo
+
     ; Write to screen
     ld de, T_Title
     ld b, 4
@@ -34,7 +41,7 @@ FirstVBlank:
 
     call WriteTitleToScreen
 
-    ld a, LCDC_ON | LCDC_BG_ON
+    ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON | LCDC_BG_MAP
     ld [rLCDC], a
 
     ld a, 0b11100100
@@ -149,7 +156,7 @@ ClearTilemapArea:
 ; @param c: y coord
 ; @return hl: tilemap address
 CalculateTilemapCoords:
-    ld hl, TILEMAP0
+    ld hl, TILEMAP1
 
     ld l, b
 
