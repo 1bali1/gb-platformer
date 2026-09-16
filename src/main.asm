@@ -220,7 +220,7 @@ TextBlinkTimer:
 
 SECTION "Text data", ROM0
 T_Title:
-    db "BCACBACBACB", 0
+    db "ABCDEFG", 0
 
 T_PressAnyButton:
-    db "BAD ACB BBCACB", 0
+    db "BAD CED BBCACB", 0
