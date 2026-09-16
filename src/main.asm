@@ -73,11 +73,11 @@ Main:
     ld a, [wGameState]
 
     cp a, STATE_TITLE
-    jr z, .GameTitleScene
+    jr z, .gameTitleScene
 
     jr Main
 
-.GameTitleScene:
+.gameTitleScene:
     ; vlbank
     ld b, 2
     ld c, 12
@@ -86,6 +86,9 @@ Main:
     call BlinkText
 
     jr Main
+
+InitalizeGame:
+    ret
 
 ; @param b: x coord
 ; @param c: y coord
@@ -213,6 +216,20 @@ SECTION "VBlank interrupt service", ROM0[0x040]
     ld [wVBlankFlag], a
     
     pop af
+
+    reti
+
+SECTION "Joypad interrupt service", ROM0[0x060]
+    push af
+    push hl
+
+    ld a, [wGameState]
+    cp a, STATE_TITLE
+
+    call z, InitalizeGame
+
+    pop af
+    pop hl
 
     reti
 
