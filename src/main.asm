@@ -2,6 +2,8 @@ INCLUDE "include/hardware.inc"
 INCLUDE "src/graphics.asm"
 
 DEF V_TITLE_START EQU 0x9000
+DEF STATE_TITLE EQU 0x00
+DEF STATE_SELECT_LEVEL EQU 0x01
 
 SECTION "Header", ROM0[0x100]
     jp EntryPoint
@@ -56,7 +58,7 @@ FirstVBlank:
 Main:
     ; main
 
-    ld hl, VBlankFlag
+    ld hl, wVBlankFlag
     xor a
 
 .VBlank:
@@ -68,6 +70,14 @@ Main:
     jr z, .VBlank
     ld [hl], a
 
+    ld a, [wGameState]
+
+    cp a, STATE_TITLE
+    jr z, .GameTitleScene
+
+    jr Main
+
+.GameTitleScene:
     ; vlbank
     ld b, 2
     ld c, 12
@@ -81,9 +91,9 @@ Main:
 ; @param c: y coord
 ; @param de: text start
 BlinkText:
-    ld a, [TextBlinkTimer]
+    ld a, [wTextBlinkTimer]
     inc a
-    ld [TextBlinkTimer], a
+    ld [wTextBlinkTimer], a
 
     cp a, 1
     call z, ClearTilemapArea
@@ -95,7 +105,7 @@ BlinkText:
     ret c
 
     xor a
-    ld [TextBlinkTimer], a
+    ld [wTextBlinkTimer], a
 
     ret
 
@@ -200,7 +210,7 @@ SECTION "VBlank interrupt service", ROM0[0x040]
     push af
     
     ld a, 1
-    ld [VBlankFlag], a
+    ld [wVBlankFlag], a
     
     pop af
 
@@ -211,12 +221,14 @@ score: db
 
 
 SECTION "Variables", WRAM0
-VBlankFlag:
+wVBlankFlag:
     db
     
-TextBlinkTimer:
+wTextBlinkTimer:
     db
 
+wGameState:
+    db
 
 SECTION "Text data", ROM0
 T_Title:
