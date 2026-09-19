@@ -50,7 +50,7 @@ FirstVBlank:
     ld [rBGP], a
     ld [rOBP0], a
 
-    ld a, 0b00000001
+    ld a, IF_JOYPAD | IF_VBLANK
     ld [rIE], a
 
     ei
@@ -75,6 +75,9 @@ Main:
     cp a, STATE_TITLE
     jr z, .gameTitleScene
 
+    cp a, STATE_SELECT_LEVEL
+    jr z, .selectGameLevel
+
     jr Main
 
 .gameTitleScene:
@@ -87,7 +90,19 @@ Main:
 
     jr Main
 
+.selectGameLevel:
+    ld b, 2
+    ld c, 12
+    ld de, T_PressAnyButton
+
+    call ClearTilemapArea
+
+    jr Main
+
 InitalizeGame:
+    ld a, 1
+    ld [wGameState], a
+
     ret
 
 ; @param b: x coord
@@ -233,6 +248,7 @@ SECTION "Joypad interrupt service", ROM0[0x060]
 
     reti
 
+
 SECTION "Player data", WRAM0
 score: db
 
@@ -249,7 +265,7 @@ wGameState:
 
 SECTION "Text data", ROM0
 T_Title:
-    db "ABCDEFGH", 0
+    db "ABCDEFGHIASB", 0
 
 T_PressAnyButton:
     db "BAD CED BBCACB", 0
