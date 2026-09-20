@@ -1,6 +1,7 @@
 INCLUDE "include/hardware.inc"
 INCLUDE "src/graphics/ascii.asm"
 INCLUDE "src/graphics/other.asm"
+INCLUDE "src/graphics/tilemaps.asm"
 
 DEF V_TITLE_START EQU 0x9000
 DEF STATE_TITLE EQU 0x00
@@ -43,8 +44,8 @@ FirstVBlank:
     ld c, 3
 
     call WriteTitleToScreen
-
-    ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON | LCDC_BG_MAP
+    
+    ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON
     ld [rLCDC], a
 
     ld a, 0b11100100
@@ -71,19 +72,20 @@ Main:
     cp a, [hl]
     jr z, .VBlank
     ld [hl], a
-    
+
     ld a, [wGameState]
 
     cp a, STATE_TITLE
-    jr z, .gameTitleScene
+    jr z, .gameTitleSceneVBlank
 
     cp a, STATE_SELECT_LEVEL
-    jr z, .selectGameLevel
+    jr z, .selectGameLevelVBlank
 
     jr Main
 
-.gameTitleScene:
+.gameTitleSceneVBlank:
     ; vlbank
+    ; TODO: Add lcd turn off
     ld b, 2
     ld c, 12
     ld de, T_PressAnyButton
@@ -92,17 +94,19 @@ Main:
 
     jr Main
 
-.selectGameLevel:
-    ld b, 2
-    ld c, 12
-    ld de, T_PressAnyButton
+.selectGameLevelVBlank:
+    ; Load select level tilemap
+    ld de, SelectLevel
+    ld hl, TILEMAP0
+    ld bc, SelectLevel.SelectLevelEnd - SelectLevel
 
-    call ClearTilemapArea
+    call CopySpaceTo
 
     jr Main
+ 
 
-InitalizeGame:
-    ld a, 1
+InitalizeSelectLevel:
+    ld a, STATE_SELECT_LEVEL
     ld [wGameState], a
 
     ret
@@ -201,7 +205,7 @@ ClearTilemapArea:
 CalculateTilemapCoords:
     push bc
 
-    ld hl, TILEMAP1
+    ld hl, TILEMAP0
 
     ld l, b
 
@@ -264,7 +268,7 @@ SECTION "Joypad interrupt service", ROM0[0x060]
     ld a, [wGameState]
     cp a, STATE_TITLE
 
-    call z, InitalizeGame
+    call z, InitalizeSelectLevel
 
     pop af
     pop hl
