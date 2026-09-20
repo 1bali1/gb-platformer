@@ -39,7 +39,7 @@ FirstVBlank:
 
     ; Write to screen
     ld de, T_Title
-    ld b, 4
+    ld b, 5
     ld c, 3
 
     call WriteTitleToScreen
@@ -71,7 +71,7 @@ Main:
     cp a, [hl]
     jr z, .VBlank
     ld [hl], a
-
+    
     ld a, [wGameState]
 
     cp a, STATE_TITLE
@@ -138,10 +138,13 @@ WriteTitleToScreen:
 .doTitleWrite:
     ld a, [de]
     or a
-
+    
     ret z
 
     inc de
+
+    cp a, 0x0a
+    jr z, .writeNewLine
 
     sub 64
     bit 7, a
@@ -152,6 +155,16 @@ WriteTitleToScreen:
 
 .notSpace:
     ld [hl+], a
+
+    jr .doTitleWrite
+
+; @do hl: tilemap address
+.writeNewLine:
+    ld a, 1
+    add c
+    ld c, a
+
+    call CalculateTilemapCoords
 
     jr .doTitleWrite
 
@@ -186,6 +199,8 @@ ClearTilemapArea:
 ; @param c: y coord
 ; @return hl: tilemap address
 CalculateTilemapCoords:
+    push bc
+
     ld hl, TILEMAP1
 
     ld l, b
@@ -196,16 +211,22 @@ CalculateTilemapCoords:
     ; 5 times
     sla c
     rl b
+
     sla c
     rl b
+
     sla c
     rl b
+
     sla c
     rl b
+
     sla c
     rl b
 
     add hl, bc
+
+    pop bc
 
     ret
 
@@ -267,7 +288,7 @@ wGameState:
 
 SECTION "Text data", ROM0
 T_Title:
-    db "ABCDEFGHMSQPR JK", 0
+    db "THE\nPLATFORMER", 0
 
 T_PressAnyButton:
-    db "BAD CED BBCACB", 0
+    db "PRESS ANY BUTTON", 0
