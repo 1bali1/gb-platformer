@@ -266,7 +266,7 @@ wGameState:
 
 SECTION "Text data", ROM0
 T_Title:
-    db "ABCDEFGHIASBKJK", 0
+    db "ABCDEFGHMSBML JK", 0
 
 T_PressAnyButton:
     db "BAD CED BBCACB", 0
