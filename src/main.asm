@@ -61,6 +61,7 @@ Main:
     ld hl, wVBlankFlag
     xor a
 
+
 .VBlank:
     halt
 
@@ -265,7 +266,7 @@ wGameState:
 
 SECTION "Text data", ROM0
 T_Title:
-    db "ABCDEFGHIASB", 0
+    db "ABCDEFGHIASBKJK", 0
 
 T_PressAnyButton:
     db "BAD CED BBCACB", 0
