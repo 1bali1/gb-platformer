@@ -1,5 +1,6 @@
 INCLUDE "include/hardware.inc"
-INCLUDE "src/graphics.asm"
+INCLUDE "src/graphics/ascii.asm"
+INCLUDE "src/graphics/other.asm"
 
 DEF V_TITLE_START EQU 0x9000
 DEF STATE_TITLE EQU 0x00
@@ -266,7 +267,7 @@ wGameState:
 
 SECTION "Text data", ROM0
 T_Title:
-    db "ABCDEFGHMSBML JK", 0
+    db "ABCDEFGHMSQPR JK", 0
 
 T_PressAnyButton:
     db "BAD CED BBCACB", 0
