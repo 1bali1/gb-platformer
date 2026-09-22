@@ -2,6 +2,7 @@ INCLUDE "include/hardware.inc"
 INCLUDE "src/graphics/ascii.asm"
 INCLUDE "src/graphics/other.asm"
 INCLUDE "src/graphics/tilemaps.asm"
+INCLUDE "src/game/select.asm"
 
 DEF V_TITLE_START EQU 0x9000
 DEF STATE_TITLE EQU 0x00
@@ -31,6 +32,12 @@ FirstVBlank:
 
     call CopySpaceTo
 
+    ld de, Tiles
+    ld hl, V_TITLE_START + (ASCII.End - ASCII)
+    ld bc, TilesEnd - Tiles
+
+    call CopySpaceTo
+
     ; Load bg tilemap
     ld de, MainTitle
     ld hl, TILEMAP0
@@ -45,8 +52,7 @@ FirstVBlank:
 
     call WriteTitleToScreen
     
-    ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON
-    ld [rLCDC], a
+    call InitalizeLcdc
 
     ld a, 0b11100100
     ld [rBGP], a
@@ -79,13 +85,13 @@ Main:
     jr z, .gameTitleSceneVBlank
 
     cp a, STATE_SELECT_LEVEL
-    jr z, .selectGameLevelVBlank
+    call z, SelectGameLevelVBlank
 
     jr Main
 
 .gameTitleSceneVBlank:
     ; vlbank
-    ; TODO: Add lcd turn off
+
     ld b, 2
     ld c, 12
     ld de, T_PressAnyButton
@@ -94,20 +100,20 @@ Main:
 
     jr Main
 
-.selectGameLevelVBlank:
-    ; Load select level tilemap
-    ld de, SelectLevel
-    ld hl, TILEMAP0
-    ld bc, SelectLevel.SelectLevelEnd - SelectLevel
-
-    call CopySpaceTo
-
-    jr Main
- 
-
 InitalizeSelectLevel:
     ld a, STATE_SELECT_LEVEL
     ld [wGameState], a
+
+    ld a, LCDC_OFF
+    ld [rLCDC], a
+
+    ld de, SelectLevel
+    ld hl, TILEMAP0
+    ld bc, SelectLevel.End - SelectLevel
+
+    call CopySpaceTo
+
+    call InitalizeLcdc
 
     ret
 
@@ -251,6 +257,13 @@ CopySpaceTo:
 
     ret
 
+; Turns on LCDC with the flags: LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON
+InitalizeLcdc:
+    ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON
+    ld [rLCDC], a
+    
+    ret
+
 SECTION "VBlank interrupt service", ROM0[0x040]
     push af
     
@@ -290,9 +303,15 @@ wTextBlinkTimer:
 wGameState:
     db
 
+wSelectedGameMode:
+    db
+
 SECTION "Text data", ROM0
 T_Title:
     db "THE\nPLATFORMER", 0
 
 T_PressAnyButton:
     db "PRESS ANY BUTTON", 0
+
+T_Placeholder:
+    db "PLACEHOLDER", 0
