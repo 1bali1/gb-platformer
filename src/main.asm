@@ -7,6 +7,7 @@ INCLUDE "src/game/select.asm"
 DEF V_TITLE_START EQU 0x9000
 DEF STATE_TITLE EQU 0x00
 DEF STATE_SELECT_LEVEL EQU 0x01
+DEF ASCII_START_INDEX EQU 48 - 1
 
 SECTION "Header", ROM0[0x100]
     jp EntryPoint
@@ -156,7 +157,7 @@ WriteTitleToScreen:
     cp a, 0x0a
     jr z, .writeNewLine
 
-    sub 64
+    sub ASCII_START_INDEX
     bit 7, a
 
     jr z, .notSpace
