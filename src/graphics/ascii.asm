@@ -1,4 +1,4 @@
-SECTION "Tiles", ROM0
+SECTION "ASCII", ROM0
 ASCII:
     ; null
     dw `00000000
@@ -10,6 +10,7 @@ ASCII:
     dw `00000000
     dw `00000000
 
+ASCII_0:
     ; ASCII 0
     dw `00000000
     dw `00333300
@@ -20,6 +21,7 @@ ASCII:
     dw `00333300
     dw `00000000
 
+ASCII_1:
     ; ASCII 1
     dw `00000000
     dw `00033000
@@ -30,6 +32,7 @@ ASCII:
     dw `00003200
     dw `00000000
 
+ASCII_2:
     ; ASCII 2
     dw `00000000
     dw `00033300
@@ -40,6 +43,7 @@ ASCII:
     dw `00333330
     dw `00000000
 
+ASCII_3:
     ; ASCII 3
     dw `00000000
     dw `00333300
@@ -50,6 +54,7 @@ ASCII:
     dw `00333310
     dw `00000000
 
+ASCII_4:
     ; ASCII 4
     dw `00000000
     dw `03003000
@@ -60,6 +65,7 @@ ASCII:
     dw `00003000
     dw `00000000
 
+ASCII_5:
     ; ASCII 5
     dw `00000000
     dw `00333330
@@ -70,6 +76,7 @@ ASCII:
     dw `00333330
     dw `00000000
 
+ASCII_6:
     ; ASCII 6
     dw `00000000
     dw `00333300
@@ -80,6 +87,7 @@ ASCII:
     dw `00333300
     dw `00000000
 
+ASCII_7:
     ; ASCII 7
     dw `00000000
     dw `00333330
@@ -90,6 +98,7 @@ ASCII:
     dw `03100000
     dw `00000000
 
+ASCII_8:
     ; ASCII 8
     dw `00000000
     dw `00333300
@@ -100,6 +109,7 @@ ASCII:
     dw `00333310
     dw `00000000
 
+ASCII_9:
     ; ASCII 9
     dw `00000000
     dw `00333300
@@ -112,6 +122,7 @@ ASCII:
 
     ds 7 * 2 * 8
 
+ASCII_A:
     ; ASCII A
     dw `00033200
     dw `00321320
@@ -371,4 +382,4 @@ ASCII:
     dw `00031000
     dw `00320000
     dw `03333330
-.End
+ASCII_End:

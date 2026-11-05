@@ -1,7 +1,5 @@
 INCLUDE "include/hardware.inc"
-INCLUDE "src/graphics/ascii.asm"
-INCLUDE "src/graphics/other.asm"
-INCLUDE "src/graphics/tilemaps.asm"
+INCLUDE "src/graphics/graphics.asm"
 INCLUDE "src/game/select.asm"
 
 DEF V_TITLE_START EQU 0x9000
@@ -29,12 +27,12 @@ FirstVBlank:
     ; Load ascii letters to vram
     ld de, ASCII
     ld hl, V_TITLE_START
-    ld bc, ASCII.End - ASCII
+    ld bc, ASCII_End - ASCII
 
     call CopySpaceTo
 
     ld de, Tiles
-    ld hl, V_TITLE_START + (ASCII.End - ASCII)
+    ld hl, V_TITLE_START + (ASCII_End - ASCII)
     ld bc, TilesEnd - Tiles
 
     call CopySpaceTo

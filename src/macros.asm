@@ -1,9 +1,16 @@
+MACRO ASCII_M
+    db (\1 - ASCII) / 16
+ENDM
+
+MACRO GAME
+    db ((ASCII_End - ASCII) / 16) + ((\1 - Tiles) / 16)
+ENDM
+
 MACRO TILEMAP_ROW
     DEF count = _NARG
 
     REPT count
-        db (((V_TITLE_START + (ASCII.End - ASCII)) + (\1 - Tiles)) - V_TITLE_START) / 16
-        
+        \1
         SHIFT
     ENDR
 
