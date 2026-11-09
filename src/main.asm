@@ -99,23 +99,6 @@ Main:
 
     jr Main
 
-InitalizeSelectLevel:
-    ld a, STATE_SELECT_LEVEL
-    ld [wGameState], a
-
-    ld a, LCDC_OFF
-    ld [rLCDC], a
-
-    ld de, SelectLevel
-    ld hl, TILEMAP0
-    ld bc, SelectLevel.End - SelectLevel
-
-    call CopySpaceTo
-
-    call InitalizeLcdc
-
-    ret
-
 ; @param b: x coord
 ; @param c: y coord
 ; @param de: text start
@@ -215,7 +198,7 @@ CalculateTilemapCoords:
     ld l, b
 
     ld b, 0
-    ld a, c
+    ; ld a, c * im not sure
 
     ; 5 times
     sla c
